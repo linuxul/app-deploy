@@ -1,5 +1,5 @@
 import { Router } from "express";
-import multer from "multer";
+import multer, { MulterError } from "multer";
 import path from "path";
 import fs from "fs";
 import Release from "../models/Release";
@@ -36,14 +36,42 @@ function fileFilter(
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: config.maxFileBytes },
+  limits: {
+    fileSize: config.maxFileBytes,
+    files: 1, // 단일 파일만 허용
+  },
 });
 
 // 업로드(공개)
 router.post(
   "/upload",
   uploadLimiter,
-  upload.single("file"),
+  (req, res, next) => {
+    upload.single("file")(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res.status(413).json({
+            message: `파일 크기가 너무 큽니다. 최대 ${
+              config.maxFileBytes / 1024 / 1024
+            }MB까지 허용됩니다.`,
+          });
+        }
+        if (err.code === "LIMIT_FILE_COUNT") {
+          return res
+            .status(400)
+            .json({ message: "한 번에 하나의 파일만 업로드할 수 있습니다." });
+        }
+        return res
+          .status(400)
+          .json({ message: `파일 업로드 오류: ${err.message}` });
+      } else if (err) {
+        return res
+          .status(400)
+          .json({ message: `파일 업로드 오류: ${err.message}` });
+      }
+      next();
+    });
+  },
   async (req, res, next) => {
     try {
       if (config.requireUploadKey) {

@@ -78,11 +78,18 @@ const q = ref("");
 
 async function fetchList(p = 1) {
   page.value = p;
-  const { data } = await api.get("/releases", {
-    params: { page: p, size, q: q.value || undefined },
-  });
-  items.value = data.items;
-  total.value = data.total;
+  try {
+    console.log("Fetching releases...");
+    const { data } = await api.get("/releases", {
+      params: { page: p, size, q: q.value || undefined },
+    });
+    console.log("API response:", data);
+    items.value = data.items;
+    total.value = data.total;
+    console.log("Items set:", items.value);
+  } catch (error) {
+    console.error("Failed to fetch releases:", error);
+  }
 }
 
 onMounted(() => fetchList());

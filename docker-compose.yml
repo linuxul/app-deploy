@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=appdist
+
+  server:
+    build: ./server
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/appdist
+      - PORT=8080
+      - UPLOAD_DIR=/data/uploads
+      - REQUIRE_UPLOAD_KEY=false
+      - MAX_FILE_MB=200
+      - CORS_ORIGIN=*
+    volumes:
+      - uploads:/data/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+
+  web:
+    build: ./web
+    restart: always
+    environment:
+      - VITE_API_BASE=/api
+    ports:
+      - "5173:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
+  uploads:

@@ -1,0 +1,33 @@
+{
+  "projectName": "앱 배포 센터 (App Distribution Center)",
+  "description": "Firebase App Distribution과 유사한 안드로이드 앱 배포 사이트",
+  "version": "1.0.0",
+  "rules": [
+    ".cursor/rules.md",
+    ".cursor/backend-rules.md",
+    ".cursor/frontend-rules.md",
+    ".cursor/security-rules.md"
+  ],
+  "technologies": {
+    "backend": ["Node.js", "Express", "MongoDB", "TypeScript"],
+    "frontend": ["Vue 3", "Vite", "Bootstrap 5", "TypeScript"],
+    "infrastructure": ["Docker", "Docker Compose"]
+  },
+  "filePatterns": {
+    "backend": ["server/src/**/*.ts", "server/**/*.json"],
+    "frontend": ["web/src/**/*.vue", "web/src/**/*.ts", "web/**/*.json"],
+    "config": ["docker-compose.yml", "**/Dockerfile", "**/.env*"]
+  },
+  "aiAssistance": {
+    "codeReview": true,
+    "securityCheck": true,
+    "performanceOptimization": true,
+    "bestPractices": true
+  },
+  "preferences": {
+    "language": "ko",
+    "codeStyle": "strict",
+    "documentation": "comprehensive",
+    "testing": "recommended"
+  }
+}

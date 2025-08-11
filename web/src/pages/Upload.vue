@@ -73,7 +73,7 @@ function onFile(e: Event) {
       lastModified: selectedFile.lastModified,
     });
 
-    // 파일 확장자 검증
+        // 파일 확장자 검증
     const fileName = selectedFile.name.toLowerCase();
     if (!fileName.endsWith(".apk") && !fileName.endsWith(".aab")) {
       alert("APK 또는 AAB 파일만 선택할 수 있습니다.");
@@ -81,7 +81,16 @@ function onFile(e: Event) {
       file.value = null;
       return;
     }
-
+    
+    // 파일 크기 검증 (200MB)
+    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
+    if (selectedFile.size > maxSize) {
+      alert(`파일 크기가 너무 큽니다. 최대 200MB까지 허용됩니다. (현재: ${(selectedFile.size / 1024 / 1024).toFixed(2)}MB)`);
+      t.value = "";
+      file.value = null;
+      return;
+    }
+    
     file.value = selectedFile;
     console.log("File set successfully:", file.value);
   } else {
